@@ -1,0 +1,226 @@
+{
+  "products": [
+    {
+      "id": "456567",
+      "name": "Maggi",
+      "category": "Instant food",
+      "buyingPrice": 430,
+      "quantity": 43,
+      "unit": "Packets",
+      "thresholdValue": 12,
+      "expiryDate": "2022-12-11",
+      "availability": "In-stock",
+      "image": "/placeholder.png"
+    },
+    {
+      "id": "456568",
+      "name": "Bru",
+      "category": "Instant food",
+      "buyingPrice": 257,
+      "quantity": 22,
+      "unit": "Packets",
+      "thresholdValue": 12,
+      "expiryDate": "2022-12-21",
+      "availability": "Out of stock",
+      "image": "/placeholder.png"
+    },
+    {
+      "id": "456569",
+      "name": "Red Bull",
+      "category": "Energy Drink",
+      "buyingPrice": 405,
+      "quantity": 36,
+      "unit": "Packets",
+      "thresholdValue": 9,
+      "expiryDate": "2022-12-05",
+      "availability": "In-stock",
+      "image": "/placeholder.png"
+    },
+    {
+      "id": "456570",
+      "name": "Bourn Vita",
+      "category": "Health Drink",
+      "buyingPrice": 502,
+      "quantity": 14,
+      "unit": "Packets",
+      "thresholdValue": 6,
+      "expiryDate": "2022-12-08",
+      "availability": "Out of stock",
+      "image": "/placeholder.png"
+    },
+    {
+      "id": "456571",
+      "name": "Horlicks",
+      "category": "Health Drink",
+      "buyingPrice": 530,
+      "quantity": 5,
+      "unit": "Packets",
+      "thresholdValue": 5,
+      "expiryDate": "2023-01-09",
+      "availability": "In-stock",
+      "image": "/placeholder.png"
+    },
+    {
+      "id": "",
+      "name": "zxsdasdasd",
+      "category": "",
+      "buyingPrice": 0,
+      "quantity": 0,
+      "unit": "",
+      "expiryDate": "",
+      "thresholdValue": 0,
+      "availability": "Out of stock"
+    },
+    {
+      "id": "213123123",
+      "name": "testestetststettst",
+      "category": "ajhdjakshdjsad",
+      "buyingPrice": 0,
+      "quantity": 0,
+      "unit": "",
+      "expiryDate": "2025-12-12",
+      "thresholdValue": 0,
+      "availability": "Out of stock"
+    }
+  ],
+  "orders": [
+    {
+      "id": "7535",
+      "exhibition": "Taste & Treat Festival",
+      "orderValue": 4306000,
+      "quantity": 43,
+      "unit": "Packets",
+      "expectedDelivery": "2022-12-11",
+      "status": "Delayed"
+    },
+    {
+      "id": "5724",
+      "exhibition": "Flavors of the City",
+      "orderValue": 2557000,
+      "quantity": 22,
+      "unit": "Packets",
+      "expectedDelivery": "2022-12-21",
+      "status": "Received"
+    },
+    {
+      "id": "2775",
+      "exhibition": "Street Bite Market",
+      "orderValue": 4075000,
+      "quantity": 36,
+      "unit": "Packets",
+      "expectedDelivery": "2022-12-05",
+      "status": "Returned"
+    }
+  ],
+  "exhibitions": [
+    {
+      "id": "oxurt5ywn",
+      "exhibitionId": "EX-2941",
+      "name": "test exibition",
+      "description": "testtesttest",
+      "startDate": "2025-12-02",
+      "endDate": "2025-12-17"
+    },
+    {
+      "id": "ui61d3cma",
+      "exhibitionId": "EX-7516",
+      "name": "test2",
+      "description": "",
+      "startDate": "2025-12-17",
+      "endDate": "2025-12-17"
+    },
+    {
+      "id": "fs13x086f",
+      "exhibitionId": "EX-7460",
+      "name": "AAAA",
+      "description": "",
+      "startDate": "2025-12-03",
+      "endDate": "2025-12-06"
+    }
+  ],
+  "exhibitionProducts": [
+    {
+      "id": "d7gyiq52d",
+      "productId": "456567",
+      "quantity": 1,
+      "status": "approved",
+      "supplierId": "current-user"
+    },
+    {
+      "id": "cszttszpu",
+      "productId": "456568",
+      "quantity": 1,
+      "status": "pending",
+      "supplierId": "current-user"
+    },
+    {
+      "id": "is0w5qty1",
+      "productId": "456570",
+      "quantity": 1,
+      "status": "pending",
+      "supplierId": "current-user"
+    },
+    {
+      "id": "7cajr3r7o",
+      "productId": "456571",
+      "quantity": 1,
+      "status": "pending",
+      "supplierId": "current-user"
+    }
+  ],
+  "productLists": [
+    {
+      "id": "a1e8x088e",
+      "exhibitionId": "EX-2941",
+      "supplierId": "current-user",
+      "status": "pending",
+      "createdAt": "2025-12-03T03:05:05.799Z",
+      "totalQuantity": 12
+    },
+    {
+      "id": "r2is3icfx",
+      "exhibitionId": "EX-7460",
+      "supplierId": "current-user",
+      "status": "pending",
+      "createdAt": "2025-12-03T03:06:14.423Z",
+      "totalQuantity": 3
+    }
+  ],
+  "productListItems": [
+    {
+      "id": "15ukio6ll",
+      "productListId": "a1e8x088e",
+      "productId": "456567",
+      "quantity": 11,
+      "price": 430
+    },
+    {
+      "id": "y9leq73fw",
+      "productListId": "a1e8x088e",
+      "productId": "456568",
+      "quantity": 1,
+      "price": 257
+    },
+    {
+      "id": "j2n0iuw1l",
+      "productListId": "r2is3icfx",
+      "productId": "456567",
+      "quantity": 1,
+      "price": 430
+    },
+    {
+      "id": "r4zoefv9a",
+      "productListId": "r2is3icfx",
+      "productId": "456568",
+      "quantity": 1,
+      "price": 257
+    },
+    {
+      "id": "i66klbiam",
+      "productListId": "r2is3icfx",
+      "productId": "456569",
+      "quantity": 1,
+      "price": 405
+    }
+  ]
+}
