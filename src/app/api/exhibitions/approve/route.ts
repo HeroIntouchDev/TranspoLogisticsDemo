@@ -1,15 +1,20 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { mockDb } from '@/services/mockDb';
+import { requireRoles, PERMISSIONS } from '@/middleware/rbac';
 
-export async function GET() {
+export async function GET(request: Request) {
+    const authResult = requireRoles(request, PERMISSIONS.APPROVAL_READ);
+    if (!authResult.authorized) {
+        return authResult.response;
+    }
+
     // Get all pending exhibition products
-    const allExhibitionProducts = db.exhibitionProducts.getAll();
-    const pendingProducts = allExhibitionProducts.filter(ep => ep.status === 'pending');
+    const pendingProducts = mockDb.getPendingExhibitionProducts();
 
     // Enrich with exhibition and product details
     const enrichedPendingProducts = pendingProducts.map(ep => {
-        const exhibition = db.exhibitions.getAll().find(e => e.exhibitionId === ep.exhibitionId);
-        const product = db.products.getById(ep.productId);
+        const exhibition = mockDb.getExhibitionByExhibitionId(ep.exhibitionId);
+        const product = mockDb.getProductById(ep.productId);
         return {
             ...ep,
             exhibitionName: exhibition?.name,
@@ -22,6 +27,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+    const authResult = requireRoles(request, PERMISSIONS.APPROVAL_APPROVE);
+    if (!authResult.authorized) {
+        return authResult.response;
+    }
+
     try {
         const body = await request.json();
         const { id, status } = body;
@@ -30,7 +40,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
         }
 
-        const updatedProduct = db.exhibitionProducts.update(id, { status });
+        const updatedProduct = mockDb.updateExhibitionProduct(id, { status });
 
         if (!updatedProduct) {
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });

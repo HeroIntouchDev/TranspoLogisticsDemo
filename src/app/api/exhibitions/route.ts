@@ -1,12 +1,23 @@
 import { NextResponse } from 'next/server';
-import { db, Exhibition, ExhibitionProduct } from '@/lib/db';
+import { mockDb, Exhibition, ExhibitionProduct } from '@/services/mockDb';
+import { requireRoles, PERMISSIONS } from '@/middleware/rbac';
 
-export async function GET() {
-    const exhibitions = db.exhibitions.getAll();
+export async function GET(request: Request) {
+    const authResult = requireRoles(request, PERMISSIONS.EXHIBITION_READ);
+    if (!authResult.authorized) {
+        return authResult.response;
+    }
+
+    const exhibitions = mockDb.getExhibitions();
     return NextResponse.json(exhibitions);
 }
 
 export async function POST(request: Request) {
+    const authResult = requireRoles(request, PERMISSIONS.EXHIBITION_CREATE);
+    if (!authResult.authorized) {
+        return authResult.response;
+    }
+
     try {
         const body = await request.json();
         const { name, description, startDate, endDate, products } = body;
@@ -20,9 +31,10 @@ export async function POST(request: Request) {
             description,
             startDate,
             endDate,
+            status: 'PLANNING',
         };
 
-        db.exhibitions.add(newExhibition);
+        mockDb.addExhibition(newExhibition);
 
         if (products && Array.isArray(products)) {
             products.forEach((p: any) => {
@@ -33,9 +45,9 @@ export async function POST(request: Request) {
                     quantity: p.quantity,
                     price: p.price,
                     status: 'pending',
-                    supplierId: 'current-user', // Placeholder
+                    supplierId: 'current-user',
                 };
-                db.exhibitionProducts.add(newExhibitionProduct);
+                mockDb.addExhibitionProduct(newExhibitionProduct);
             });
         }
 

@@ -1,25 +1,31 @@
 import { NextResponse } from 'next/server';
-import { db, ProductList, ProductListItem } from '@/lib/db';
+import { mockDb, ProductList, ProductListItem } from '@/services/mockDb';
+import { requireRoles, PERMISSIONS } from '@/middleware/rbac';
 
 export async function GET(
     request: Request,
     props: { params: Promise<{ id: string }> }
 ) {
+    const authResult = requireRoles(request, PERMISSIONS.ORDER_READ);
+    if (!authResult.authorized) {
+        return authResult.response;
+    }
+
     const params = await props.params;
-    const list = db.productLists.getById(params.id);
+    const list = mockDb.getProductListById(params.id);
     if (!list) {
         return NextResponse.json({ error: 'Product list not found' }, { status: 404 });
     }
 
-    const items = db.productListItems.getByProductListId(list.id);
+    const items = mockDb.getProductListItemsByProductListId(list.id);
 
     // Enrich items with product details
     const enrichedItems = items.map(item => {
-        const product = db.products.getById(item.productId);
+        const product = mockDb.getProductById(item.productId);
         return {
             ...item,
             productName: product?.name,
-            productSKU: product?.id, // Using ID as SKU for now
+            productSKU: product?.id,
             productUnit: product?.unit,
             productImage: product?.image,
         };
@@ -32,30 +38,34 @@ export async function PUT(
     request: Request,
     props: { params: Promise<{ id: string }> }
 ) {
+    const authResult = requireRoles(request, PERMISSIONS.ORDER_UPDATE);
+    if (!authResult.authorized) {
+        return authResult.response;
+    }
+
     const params = await props.params;
     try {
         const body = await request.json();
         const { status, items } = body;
 
-        const list = db.productLists.getById(params.id);
+        const list = mockDb.getProductListById(params.id);
         if (!list) {
             return NextResponse.json({ error: 'Product list not found' }, { status: 404 });
         }
 
         // Update status
         if (status) {
-            db.productLists.update(list.id, { status });
+            mockDb.updateProductList(list.id, { status });
         }
 
-        // Update items (only if pending, or if logic allows)
-        // For now, we'll assume full replacement of items if 'items' is provided
+        // Update items if provided
         if (items && Array.isArray(items)) {
             // Calculate new total quantity
             const totalQuantity = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
-            db.productLists.update(list.id, { totalQuantity });
+            mockDb.updateProductList(list.id, { totalQuantity });
 
             // Remove old items
-            db.productListItems.deleteByProductListId(list.id);
+            mockDb.deleteProductListItemsByProductListId(list.id);
 
             // Add new items
             items.forEach((item: any) => {
@@ -66,7 +76,7 @@ export async function PUT(
                     quantity: item.quantity,
                     price: item.price || 0,
                 };
-                db.productListItems.add(newItem);
+                mockDb.addProductListItem(newItem);
             });
         }
 

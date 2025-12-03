@@ -1,15 +1,27 @@
 import { NextResponse } from 'next/server';
-import { db, Product } from '@/lib/db';
-
-export async function GET() {
-    const products = db.products.getAll();
-    return NextResponse.json(products);
-}
-
+import { mockDb, Product } from '@/services/mockDb';
+import { requireRoles, PERMISSIONS } from '@/middleware/rbac';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 
+export async function GET(request: Request) {
+    // Check read permission
+    const authResult = requireRoles(request, PERMISSIONS.PRODUCT_READ);
+    if (!authResult.authorized) {
+        return authResult.response;
+    }
+
+    const products = mockDb.getProducts();
+    return NextResponse.json(products);
+}
+
 export async function POST(request: Request) {
+    // Check create permission
+    const authResult = requireRoles(request, PERMISSIONS.PRODUCT_CREATE);
+    if (!authResult.authorized) {
+        return authResult.response;
+    }
+
     try {
         const formData = await request.formData();
         const image = formData.get('image') as File | null;
@@ -47,9 +59,11 @@ export async function POST(request: Request) {
             expiryDate: formData.get('expiryDate') as string,
             availability: formData.get('availability') as 'In-stock' | 'Out of stock' | 'Low stock',
             image: imagePath,
+            sku: `SKU-${formData.get('id') || Math.floor(Math.random() * 1000000)}`,
+            isApproved: false, // New products default to not approved
         };
 
-        const createdProduct = db.products.add(newProduct);
+        const createdProduct = mockDb.addProduct(newProduct);
         return NextResponse.json(createdProduct, { status: 201 });
     } catch (error) {
         console.error('Error creating product:', error);

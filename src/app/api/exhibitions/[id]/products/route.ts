@@ -1,18 +1,24 @@
 import { NextResponse } from 'next/server';
-import { db, ExhibitionProduct } from '@/lib/db';
+import { mockDb, ExhibitionProduct } from '@/services/mockDb';
+import { requireRoles, PERMISSIONS } from '@/middleware/rbac';
 
 export async function GET(
     request: Request,
     { params }: { params: { id: string } }
 ) {
+    const authResult = requireRoles(request, PERMISSIONS.EXHIBITION_READ);
+    if (!authResult.authorized) {
+        return authResult.response;
+    }
+
     const exhibitionId = params.id;
 
     // Get all products for this exhibition
-    const exhibitionProducts = db.exhibitionProducts.getByExhibitionId(exhibitionId);
+    const exhibitionProducts = mockDb.getExhibitionProductsByExhibitionId(exhibitionId);
 
     // Enrich with product details
     const enrichedProducts = exhibitionProducts.map(ep => {
-        const product = db.products.getById(ep.productId);
+        const product = mockDb.getProductById(ep.productId);
         return {
             ...ep,
             productName: product?.name,
@@ -28,6 +34,11 @@ export async function POST(
     request: Request,
     { params }: { params: { id: string } }
 ) {
+    const authResult = requireRoles(request, PERMISSIONS.EXHIBITION_CREATE);
+    if (!authResult.authorized) {
+        return authResult.response;
+    }
+
     try {
         const exhibitionId = params.id;
         const body = await request.json();
@@ -42,9 +53,9 @@ export async function POST(
                     quantity: p.quantity,
                     price: p.price,
                     status: 'pending',
-                    supplierId: 'current-user', // Placeholder
+                    supplierId: 'current-user',
                 };
-                db.exhibitionProducts.add(newExhibitionProduct);
+                mockDb.addExhibitionProduct(newExhibitionProduct);
             });
         }
 
